@@ -3,21 +3,21 @@
         <table width="100%" height="100%" style="min-height:100%" cellpadding="5" border="0" >
             <tr valign="top">
                 <td>
-                    <vuepopper title="persist on me!" content="mouse hover me and i won't hide" :keep_on_over="popup_keep_on_over">
+                    <vuetipster title="persist on me!" content="mouse hover me and i won't hide" :keep_on_over="popup_keep_on_over">
                         <button >hover with persistence</button>
-                    </vuepopper>
+                    </vuetipster>
                 </td>
 
                 <td>
                     <br /><br /><br />
-                    <vuepopper title="simple" :content="popup_content">
+                    <vuetipster title="simple" :content="popup_content">
                         <button >i have a tooltip</button>
-                    </vuepopper>
+                    </vuetipster>
                 </td>
                 <td>
-                    <vuepopper ref="manual_popper" :title="popup_title" :content="popup_content_html" :manual="popup_manual">
+                    <vuetipster ref="manual_popper" :title="popup_title" :content="popup_content_html" :manual="popup_manual">
                         <button >manual - someone else controls me</button>
-                    </vuepopper>
+                    </vuetipster>
                     &nbsp;
                     <button @click="$refs['manual_popper'].show()">show</button>
                     &nbsp;
@@ -26,12 +26,21 @@
             </tr>
             <tr valign="middle">
                 <td>
-                    <vuepopper :title="popup_title" :content="popup_content">
+                    <vuetipster :title="popup_title" :content="popup_content">
                         <button name="hithere">i have a tooltip</button>
-                    </vuepopper>
+                    </vuetipster>
                 </td>
                 <td>
+                    <br /><br /><br />
+                    <button @click="$refs['notifier'].show()">show notification</button>
+                    &nbsp;
+                    <button @click="$refs['notifier_hover'].show();">show notification with keep on hover</button>
+                    &nbsp;
+                    <button @click="$refs['notifier_click'].show()">show notification and close on click</button>
 
+                    <vuetipster ref="notifier" type="notification" title="i will notify" content="i will be your permanent notifier" placement="top-right"></vuetipster>
+                    <vuetipster ref="notifier_hover" placement="bottom" :keep_on_over="popup_keep_on_over" type="notification" title="i will notify" content="i will be your permanent notifier and wont <br />close if you hover me"></vuetipster>
+                    <vuetipster ref="notifier_click" :close_on_click="popup_keep_on_over" placement="bottom-right"  type="notification" title="i will notify" content="close me with a click :("></vuetipster>
                 </td>
                 <td>
                     </td>
@@ -39,14 +48,14 @@
             <tr valign="bottom">
                 <td>
                         <br /><br /><br /><br /><br /><br />
-                    <vuepopper :title="popup_title" :content="popup_content">
+                    <vuetipster :title="popup_title" :content="popup_content">
                         <button name="hithere">i have a tooltip</button>
-                    </vuepopper>
+                    </vuetipster>
                 </td>
                 <td>
                     <button id="target_button">with target</button>
 
-                    <vuepopper ref="popup-program" :title="popup_title" :content="popup_content_html" target="#target_button"></vuepopper>
+                    <vuetipster ref="popup-program" :title="popup_title" :content="popup_content_html" target="#target_button"></vuetipster>
                     &nbsp;
                     <button @click="showPopup">show</button>
                     &nbsp;
@@ -61,17 +70,17 @@
                     &nbsp;
                     <button @click="popup_target='#target_button2'">choose me</button>
 
-                    <vuepopper :target="popup_target" title="dynamic" content="i change buttons as i wish"></vuepopper>
+                    <vuetipster :target="popup_target" title="dynamic" content="i change buttons as i wish"></vuetipster>
                 </td>
             </tr>
         </table>
     </div>
 </template>
 <script>
-import vuepopper from './vue-popper.vue'
+import vuetipster from './vue-tipster.vue'
 export default{
     components:{
-        'vuepopper':vuepopper
+        'vuetipster':vuetipster
     },
     data(){
         return {

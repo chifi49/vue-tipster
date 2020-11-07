@@ -1,8 +1,9 @@
 <template>
     <span >
         <slot name="default"></slot>
-        <div ref="popupcontent" :style="{'display':'none',width:'auto','position':'absolute','max-width':max_width,'min-width':min_width,'left':popup_left+'px','top':popup_top+'px','visibility':'hidden','transition':'opacity 0.5s'}">
+        <div ref="popupcontent" :style="{'display':'none',width:'auto','position':(type=='dialog' || type=='notification'?'fixed':'absolute'),'max-width':max_width,'min-width':min_width,'left':popup_left+'px','top':popup_top+'px','visibility':'hidden','transition':'opacity 0.5s'}">
 
+            <!-- top center caret-->
             <span v-if="type=='tooltip'?true:false" class="popper-caret-bg popper-caret-bg-top" :style="{'display':current_placement=='bottom'?'inline-block':'none',width:0,height:0,borderLeft:'9px solid transparent',borderRight:'9px solid transparent',borderBottom:'9px solid '+border_color,'left':(popup_width)-9+'px','position':'absolute','top':'-8px'}">
                 <span class="popper-caret" :style="{width:0,height:0,borderLeft:'7px solid transparent',borderRight:'7px solid transparent',borderBottom:'7px solid '+caret_bg_color,'left':'-7px','position':'absolute','top':'2px'}"></span>
             </span>
@@ -29,11 +30,17 @@
 </template>
 <script>
 export default{
+    name:'vue-tipster',
     props:{
         type:{
             required:false,
             type:String,
             default:'tooltip' //tooltip, dialog or notification
+        },
+        timeout:{
+            required:false,
+            type:Number,
+            default:2500
         },
         title:{
             required:false,
@@ -78,7 +85,7 @@ export default{
         placement:{
             required:false,
             type:String,
-            default:'auto'
+            default:'auto' //top, top-left, top-right, center, center-left, center-right, bottom, bottom-left, bottom-right
         },
         target:{
             required:false,
@@ -99,6 +106,11 @@ export default{
             required:false,
             type:Boolean,
             default:false
+        },
+        close_on_click:{
+            required:false,
+            type:Boolean,
+            default:false
         }
     },
     watch:{
@@ -112,7 +124,7 @@ export default{
             if(newval!=oldval){
                 this.removeHandlers();
                 this.dsDom = document.querySelector(newval);
-                this.setupHandlers();
+                this['setupHandlers_'+this.type]();
             }
         }
     },
@@ -155,6 +167,7 @@ export default{
             popup_top:'0px',
             popup_opacity:0,
             popup_width:0,
+            popup_height:0,
             hide_timeout:-1,
             hide_styles_timeout:-1,
             is_showing: false,
@@ -172,7 +185,25 @@ export default{
         isShowning:function(){
             return this.is_showing;
         },
-        setupHandlers(){
+        setupHandlers_notification(){
+            var me = this;
+            if(this.close_on_click){
+                this.popupO.addEventListener('click',this.hide);
+            }
+            if(this.keep_on_over){
+                this.popupO.addEventListener('mouseover',()=>{
+                    console.log('on over');
+
+                    me.show();
+                    clearTimeout(this.hide_timeout);
+                    clearTimeout(this.hide_styles_timeout);
+                })
+                this.popupO.addEventListener('mouseout',()=>{
+                    this.hide_timeout = setTimeout(()=>{me.hide()},this.timeout);
+                })
+            }
+        },
+        setupHandlers_tooltip(){
             if(this.dsDom!=null){
 
                 var me = this;
@@ -195,6 +226,9 @@ export default{
                         this.dsDom.addEventListener('mouseout',this.hide)
                     }
                 }
+                if(this.close_on_click){
+                    this.popupO.addEventListener('click',this.hide);
+                }
             }
         },
         
@@ -205,6 +239,11 @@ export default{
 
             this.dsDom.removeEventListener('mouseout',this.hide);
             this.dsDom.removeEventListener('blur',this.hide);
+
+            if(this.keep_on_over){
+                this.popupO.removeEventListener('mouseover',this.show);
+                this.popupO.removeEventListener('mouseout',this.hide);
+            }
         },
         measureViewport(){
             var div = document.createElement('div');
@@ -219,8 +258,8 @@ export default{
             document.body.appendChild(div);
             var dim = div.getBoundingClientRect();
             var view = {
-                w: dim.width,
-                h: dim.height
+                width: dim.width,
+                height: dim.height
             }
             document.body.removeChild(div);
             console.log(view);
@@ -231,41 +270,69 @@ export default{
             clearTimeout(this.hide_styles_timeout);
             clearTimeout(this.hide_timeout);
 
-            var target_dim = this.target_dim();
-            
-            //console.log(this.popupO);
-            //console.log(this.popupO.style);
-            //this.popupO.style.opacity = 0;
-            //this.popupO.style.visibility = 'visible';
-            
             this.popupO.style.opacity = 0;
             this.popupO.style.display='inline-block';
 
+            //viewport dimensions
+            var view_dim = this.measureViewport();
+
+            var target_dim = this.type=='tooltip'?this.target_dim():view_dim;
+            
             //measure after we set display to inline-block because in hidden it can report wrongly
             var popper_dim = this.popper_dim();
 
-            var view_dim = this.measureViewport();
+            var left = 0;
+            var top = 0;
             //console.log(view_dim);
-            var left = target_dim.left+(target_dim.width/2)-(popper_dim.width/2);
+            
+            left = target_dim.left+(target_dim.width/2)-(popper_dim.width/2);
             if(left<0){
                 left = target_dim.left;
             }
-            this.popup_left = left;
-            var top = target_dim.top+target_dim.height+10;
-            this.current_placement='bottom';
-            if(top+popper_dim.height>view_dim.h){
-                top = target_dim.top - popper_dim.height-10;
-                //move to top
-                this.current_placement='top';
+            
+            if(this.type=='tooltip'){
+                top = target_dim.top+target_dim.height+10;
+                this.current_placement='bottom';
+                if(top+popper_dim.height>view_dim.height){
+                    top = target_dim.top - popper_dim.height-10;
+                    //move to top
+                    this.current_placement='top';
+                }
+                top= top+window.scrollY;
+            }else{
+                //assume left is always top-left, center-left, bottom-left
+                left = 10;
+                if(['center','top','bottom'].indexOf(this.placement)!=-1 ){
+                    left = view_dim.width/2-popper_dim.width/2;
+                }else if(['top-right','center-right','bottom-right'].indexOf(this.placement)!=-1){
+                    left = view_dim.width - popper_dim.width-10;
+                }
+                top = 10;
+                if(this.placement=='center'){
+                    top = view_dim.height/2-popper_dim.height/2;
+                }else if(['bottom-left','bottom','bottom-right'].indexOf(this.placement)!=-1){
+                    top = view_dim.height-popper_dim.height-10;
+                }
             }
-            this.popup_top = top+window.scrollY;
+
+            this.popup_left = left;
+            this.popup_top = top;
+
+
             this.popupO.style.visibility = 'visible';
             //this.popupO.style.transition='0.5s';
             this.popup_width = popper_dim.width/2;
+            this.popup_height = popper_dim.height/2;
             //console.log(popper_dim);
             this.popupO.style.opacity = 1;
             this.popupO.style.zIndex = 100;
             this.is_showing = true;
+
+            if(this.type=='notification'){
+                if(!this.close_on_click){
+                    this.hide_timeout = setTimeout(this.hide,this.timeout);
+                }
+            }
 
         },
         hide(){
@@ -289,7 +356,7 @@ export default{
         },
         resized(){
             //console.log(window.scrollY);
-            if(this.is_showing){
+            if(this.is_showing && this.type=='tooltip'){
                 //find the new coordinates
                 this.show();
             }
@@ -319,8 +386,9 @@ export default{
 
         if(this.type=='tooltip'){
             //we do not need these handlers for simple dialog
-            this.setupHandlers();
+            //this.setupHandlers();
         }
+        this['setupHandlers_'+this.type]();
         window.addEventListener('resize',this.resized)
     },
     destroy(){
