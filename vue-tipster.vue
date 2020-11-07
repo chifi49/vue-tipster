@@ -1,11 +1,16 @@
 <template>
-    <span >
+    <span data-init='0' >
         <slot name="default"></slot>
         <div ref="popupcontent" :style="{'display':'none',width:'auto','position':(type=='dialog' || type=='notification'?'fixed':'absolute'),'max-width':max_width,'min-width':min_width,'left':popup_left+'px','top':popup_top+'px','visibility':'hidden','transition':'opacity 0.5s'}">
 
             <!-- top center caret-->
             <span v-if="type=='tooltip'?true:false" class="tipster-caret-bg tipster-caret-bg-top" :style="{'display':current_placement=='bottom'?'inline-block':'none',width:0,height:0,borderLeft:'9px solid transparent',borderRight:'9px solid transparent',borderBottom:'9px solid '+border_color,'left':(popup_width)-9+'px','position':'absolute','top':'-8px'}">
                 <span class="tipster-caret" :style="{width:0,height:0,borderLeft:'7px solid transparent',borderRight:'7px solid transparent',borderBottom:'7px solid '+caret_bg_color,'left':'-7px','position':'absolute','top':'2px'}"></span>
+            </span>
+
+            <!--  right caret-->
+            <span v-if="type=='tooltip'?true:false" class="tipster-caret-bg tipster-caret-bg-right" :style="{'display':current_placement=='left'?'inline-block':'none',width:0,height:0,borderLeft:'9px solid '+border_color,borderBottom:'9px solid transparent',borderTop:'9px solid transparent','left':(popup_width*2)+'px','position':'absolute','top':popup_height-9+'px'}">
+                <span class="tipster-caret" :style="{width:0,height:0,borderLeft:'7px solid '+caret_bg_color,borderBottom:'7px solid transparent',borderTop:'7px solid transparent','left':'-9px','position':'absolute','top':'-7px'}"></span>
             </span>
             
             <div class="tipster-container" :style="{'border-color':border_color,'border-style':'solid',borderWidth:'1px','border-radius':'10px'}">
@@ -23,6 +28,11 @@
                     </slot>
                 </div>
             </div>
+
+            <!-- left caret-->
+            <span v-if="type=='tooltip'?true:false" class="tipster-caret-bg tipster-caret-bg-right" :style="{'display':current_placement=='right'?'inline-block':'none',width:0,height:0,borderRight:'9px solid '+border_color,borderBottom:'9px solid transparent',borderTop:'9px solid transparent','left':'-9px','position':'absolute','top':popup_height-9+'px'}">
+                <span class="tipster-caret" :style="{width:0,height:0,borderRight:'7px solid '+caret_bg_color,borderBottom:'7px solid transparent',borderTop:'7px solid transparent','left':'2px','position':'absolute','top':'-7px'}"></span>
+            </span>
             
             <span v-if="type=='tooltip'?true:false" class="tipster-caret-bg tipster-caret-bg-bottom" :style="{'display':current_placement=='top'?'inline-block':'none',width:0,height:0,borderLeft:'9px solid transparent',borderRight:'9px solid transparent',borderTop:'9px solid '+border_color,'left':(popup_width)-9+'px','position':'absolute','bottom':'-8px'}">
                 <span class="tipster-caret" :style="{width:0,height:0,borderLeft:'7px solid transparent',borderRight:'7px solid transparent',borderTop:'7px solid '+caret_bg_color,'left':'-7px','position':'absolute','top':'-9px'}"></span>
@@ -32,6 +42,7 @@
     </span>
 </template>
 <script>
+import Vue from 'vue';
 export default{
     name:'vue-tipster',
     props:{
@@ -93,7 +104,11 @@ export default{
         placement:{
             required:false,
             type:String,
-            default:'auto' //top, top-left, top-right, center, center-left, center-right, bottom, bottom-left, bottom-right
+            default:'auto' 
+            //for notification
+            //top, top-left, top-right, center, center-left, center-right, bottom, bottom-left, bottom-right
+            //for tooltip
+            //top, bottom, left, right
         },
         target:{
             required:false,
@@ -128,7 +143,7 @@ export default{
             }
         },
         target:function(newval,oldval){
-            console.log(newval,oldval);
+            //console.log(newval,oldval);
             if(newval!=oldval){
                 this.removeHandlers();
                 this.dsDom = document.querySelector(newval);
@@ -161,12 +176,13 @@ export default{
             if(this.has_header && this.current_placement=='bottom'){
                 bg_color= this.header_bg_color;
             }
-            console.log('caret bg color',bg_color);
+            //console.log('caret bg color',bg_color);
             return bg_color;
         }
     },
     data(){
         return {
+            id:null,
             dsDom:null, //default slot dom
             popupO:null,
             original_target:'',//keep track if it was a slot or a target attribute (because target attribute can be track for changes)
@@ -200,7 +216,7 @@ export default{
             }
             if(this.keep_on_over){
                 this.popupO.addEventListener('mouseover',()=>{
-                    console.log('on over');
+                    //console.log('on over');
 
                     me.show();
                     clearTimeout(this.hide_timeout);
@@ -221,7 +237,7 @@ export default{
                     }else{
                         if(this.keep_on_over){
                             this.popupO.addEventListener('mouseover',()=>{
-                                console.log('on over');
+                               // console.log('on over');
                                 me.show();
                             })
                             this.popupO.addEventListener('mouseout',()=>{
@@ -248,7 +264,7 @@ export default{
             this.dsDom.removeEventListener('mouseout',this.hide);
             this.dsDom.removeEventListener('blur',this.hide);
 
-            if(this.keep_on_over){
+            if(this.keep_on_over && this.popupO!=null){
                 this.popupO.removeEventListener('mouseover',this.show);
                 this.popupO.removeEventListener('mouseout',this.hide);
             }
@@ -270,7 +286,7 @@ export default{
                 height: dim.height
             }
             document.body.removeChild(div);
-            console.log(view);
+            //console.log(view);
             return view;
         },
         show(){
@@ -293,14 +309,32 @@ export default{
             var top = 0;
             //console.log(view_dim);
             
-            left = target_dim.left+(target_dim.width/2)-(tipster_dim.width/2);
-            if(left<0){
-                left = target_dim.left;
-            }
+           
             
             if(this.type=='tooltip'){
-                top = target_dim.top+target_dim.height+10;
                 this.current_placement='bottom';
+
+                 left = target_dim.left+(target_dim.width/2)-(tipster_dim.width/2);
+                if(left<0){
+                    left = target_dim.left;
+                }else if(left+tipster_dim.width>view_dim.width){
+                    left = target_dim.left+target_dim.width-tipster_dim.width;
+                }
+                
+                //always default to bottom
+                top = target_dim.top+target_dim.height+10;
+                if(this.placement=='top'){
+                    top = target_dim.top-tipster_dim.height-10;
+                }else if(this.placement=='left' ){
+                    top = target_dim.top+(target_dim.height/2)-tipster_dim.height/2;
+                    left = target_dim.left-tipster_dim.width-10;
+                    this.current_placement = 'left';
+                }else if(this.placement=='right'){
+                    top = target_dim.top+(target_dim.height/2)-tipster_dim.height/2;
+                    left = target_dim.left+target_dim.width+10;
+                    this.current_placement = 'right';
+                }
+                
                 if(top+tipster_dim.height>view_dim.height){
                     top = target_dim.top - tipster_dim.height-10;
                     //move to top
@@ -368,15 +402,46 @@ export default{
                 //find the new coordinates
                 this.show();
             }
+        },
+        getDateTime(){
+            var d = new Date();
+            var month = d.getMonth()+1;
+            var day = d.getDate()+1;
+            var hours = d.getHours();
+            var mins = d.getMinutes();
+            var secs = d.getSeconds();
+            var mills = d.getMilliseconds();
+            return d.getFullYear()+''+(month<10?'0'+month:month)+''+(day<10?'0'+day:day)+''+(hours<10?'0'+hours:hours)+''+(mins<10?'0'+mins:mins)+''+(secs<10?'0'+secs:secs)+'.'+mills
         }
     },
+    created(){
+        if(typeof this.$vtipster=='undefined'){
+            Vue.prototype.$vtipster  = Vue.observable({instances:0,creations:0})
+        }
+        this.$vtipster.instances++;
+        this.$vtipster.creations++;
+        this.id = 'vue-tipster-'+this.getDateTime()+'.'+this.$vtipster.creations;
+    },
     mounted(){
+        
+        var popup_e = document.querySelector("[data-id='"+this.id+"']");
+        if(popup_e!=null){
+            document.body.removeChild(popup_e);
+        }
+        var inited = this.$el.getAttribute('data-init');
+        if(parseInt(inited)==1){
+            console.log('inited');
+            this.$el.setAttribute('data-init',1);
+        }
+        //console.log(this.id);
         //console.log(this.$slots.default[0].elm);
         this.original_type = this.type;
 
-        this.popupO = this.$refs['popupcontent']
+        this.popupO = this.$refs['popupcontent'];
+        this.popupO.setAttribute('data-id',this.id)
         //append to body and it will automatically move to end of the <body> tag
         document.body.appendChild( this.popupO );
+
 
         //only tooltip needs the default slot or target as a trigger (other types do not need a trigger)
         if(this.original_type=='tooltip'){
@@ -387,21 +452,25 @@ export default{
                 this.dsDom = document.querySelector(this.target);
                 this.$el.style.display='none';
                 this.original_target = 'target';
-                console.log('has target',this.target);
             }
         }
-        //console.log(this.popupO);
-
-        if(this.type=='tooltip'){
-            //we do not need these handlers for simple dialog
-            //this.setupHandlers();
-        }
+       
         this['setupHandlers_'+this.type]();
-        window.addEventListener('resize',this.resized)
+        window.addEventListener('resize',this.resized);
+    },
+    beforeDestroy(){
+        //alert('before')
+        
+        document.body.removeChild(this.popupO);
     },
     destroy(){
+        this.$vtipster.instances-=1;
+        
+        window.removeEventListener('resize',this.resized);
         this.removeHandlers();
-        window.removeEventListener('resize',this.resized)
+        //document.body.removeChild( this.popupO );
+        //document.body.removeChild( this.popupO );
+        console.log('removed popupO');
     }
 }
 </script>

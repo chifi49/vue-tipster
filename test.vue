@@ -10,7 +10,7 @@
 
                 <td>
                     <br /><br /><br />
-                    <vuetipster title="simple" :content="popup_content">
+                    <vuetipster title="simple" placement="right" :content="popup_content">
                         <button >i have a tooltip</button>
                     </vuetipster>
                 </td>
@@ -70,7 +70,13 @@
                     &nbsp;
                     <button @click="popup_target='#target_button2'">choose me</button>
 
-                    <vuetipster :target="popup_target" title="dynamic" content="i change buttons as i wish"></vuetipster>
+                    <vuetipster placement="left" :target="popup_target" title="dynamic" content="i change buttons as i wish"></vuetipster>
+
+
+                    <button @click="tipster_visible=!tipster_visible">toggle</button>
+                    <vuetipster content="ola kala" v-if="tipster_visible">
+                        <button>tooltip dynamic</button>
+                    </vuetipster>
                 </td>
             </tr>
         </table>
@@ -84,6 +90,7 @@ export default{
     },
     data(){
         return {
+            tipster_visible:false,
             popup_keep_on_over:true,
             popup_manual:true,
             popup_target:'#target_button1',
