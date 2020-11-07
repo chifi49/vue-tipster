@@ -4,25 +4,28 @@
         <div ref="popupcontent" :style="{'display':'none',width:'auto','position':(type=='dialog' || type=='notification'?'fixed':'absolute'),'max-width':max_width,'min-width':min_width,'left':popup_left+'px','top':popup_top+'px','visibility':'hidden','transition':'opacity 0.5s'}">
 
             <!-- top center caret-->
-            <span v-if="type=='tooltip'?true:false" class="popper-caret-bg popper-caret-bg-top" :style="{'display':current_placement=='bottom'?'inline-block':'none',width:0,height:0,borderLeft:'9px solid transparent',borderRight:'9px solid transparent',borderBottom:'9px solid '+border_color,'left':(popup_width)-9+'px','position':'absolute','top':'-8px'}">
-                <span class="popper-caret" :style="{width:0,height:0,borderLeft:'7px solid transparent',borderRight:'7px solid transparent',borderBottom:'7px solid '+caret_bg_color,'left':'-7px','position':'absolute','top':'2px'}"></span>
+            <span v-if="type=='tooltip'?true:false" class="tipster-caret-bg tipster-caret-bg-top" :style="{'display':current_placement=='bottom'?'inline-block':'none',width:0,height:0,borderLeft:'9px solid transparent',borderRight:'9px solid transparent',borderBottom:'9px solid '+border_color,'left':(popup_width)-9+'px','position':'absolute','top':'-8px'}">
+                <span class="tipster-caret" :style="{width:0,height:0,borderLeft:'7px solid transparent',borderRight:'7px solid transparent',borderBottom:'7px solid '+caret_bg_color,'left':'-7px','position':'absolute','top':'2px'}"></span>
             </span>
             
-            <div class="popper-container" :style="{'border-color':border_color,'border-style':'solid',borderWidth:'1px','border-radius':'10px'}">
-                <div class="popper-header" :style="{'display':has_header?'block':'none','background-color':header_bg_color,'border-radius':'10px 10px 0px 0px', padding:'5px'}">
-                    <slot name="title">{{title}}</slot>
+            <div class="tipster-container" :style="{'border-color':border_color,'border-style':'solid',borderWidth:'1px','border-radius':'10px'}">
+                <div class="tipster-header" :style="{'display':has_header?'block':'none','background-color':header_bg_color,'border-radius':'10px 10px 0px 0px', padding:'5px'}">
+                    <slot name="title"><div v-html="title"></div></slot>
                 </div>
-                <div class="popper-content" :style="{'background-color':content_bg_color,'padding':'5px','border-radius':'10px'}">
+                <div class="tipster-content" :style="{'background-color':content_bg_color,'padding':'5px','border-radius':'10px'}">
                     <slot name="content">
                         <div v-html="content"></div>
                     </slot>
                 </div>
-                <div class="popper-footer" :style="{display:has_footer?'block':'none'}">
+                <div class="tipster-footer" :style="{display:has_footer?'block':'none'}">
+                    <slot name="footer">
+                        <div v-html="footer"></div>
+                    </slot>
                 </div>
             </div>
             
-            <span v-if="type=='tooltip'?true:false" class="popper-caret-bg popper-caret-bg-bottom" :style="{'display':current_placement=='top'?'inline-block':'none',width:0,height:0,borderLeft:'9px solid transparent',borderRight:'9px solid transparent',borderTop:'9px solid '+border_color,'left':(popup_width)-9+'px','position':'absolute','bottom':'-8px'}">
-                <span class="popper-caret" :style="{width:0,height:0,borderLeft:'7px solid transparent',borderRight:'7px solid transparent',borderTop:'7px solid '+caret_bg_color,'left':'-7px','position':'absolute','top':'-9px'}"></span>
+            <span v-if="type=='tooltip'?true:false" class="tipster-caret-bg tipster-caret-bg-bottom" :style="{'display':current_placement=='top'?'inline-block':'none',width:0,height:0,borderLeft:'9px solid transparent',borderRight:'9px solid transparent',borderTop:'9px solid '+border_color,'left':(popup_width)-9+'px','position':'absolute','bottom':'-8px'}">
+                <span class="tipster-caret" :style="{width:0,height:0,borderLeft:'7px solid transparent',borderRight:'7px solid transparent',borderTop:'7px solid '+caret_bg_color,'left':'-7px','position':'absolute','top':'-9px'}"></span>
             </span>
 
         </div><!--popupcontent-->
@@ -48,6 +51,11 @@ export default{
             default:''
         },
         content:{
+            required:false,
+            type:String,
+            default:''
+        },
+        footer:{
             required:false,
             type:String,
             default:''
@@ -146,7 +154,7 @@ export default{
             return this.title!='' || (typeof this.$slots.title!=='undefined' && this.$slots.title.length>0)?true:false;
         },
         has_footer:function(){
-            return typeof this.$slots.footer!=='undefined'?true:false;
+            return this.footer!='' || (typeof this.$slots.footer!=='undefined' && this.$slots.footer.length>0)?true:false;
         },
         caret_bg_color:function(){
             var bg_color = this.content_bg_color;
@@ -279,13 +287,13 @@ export default{
             var target_dim = this.type=='tooltip'?this.target_dim():view_dim;
             
             //measure after we set display to inline-block because in hidden it can report wrongly
-            var popper_dim = this.popper_dim();
+            var tipster_dim = this.tipster_dim();
 
             var left = 0;
             var top = 0;
             //console.log(view_dim);
             
-            left = target_dim.left+(target_dim.width/2)-(popper_dim.width/2);
+            left = target_dim.left+(target_dim.width/2)-(tipster_dim.width/2);
             if(left<0){
                 left = target_dim.left;
             }
@@ -293,8 +301,8 @@ export default{
             if(this.type=='tooltip'){
                 top = target_dim.top+target_dim.height+10;
                 this.current_placement='bottom';
-                if(top+popper_dim.height>view_dim.height){
-                    top = target_dim.top - popper_dim.height-10;
+                if(top+tipster_dim.height>view_dim.height){
+                    top = target_dim.top - tipster_dim.height-10;
                     //move to top
                     this.current_placement='top';
                 }
@@ -303,15 +311,15 @@ export default{
                 //assume left is always top-left, center-left, bottom-left
                 left = 10;
                 if(['center','top','bottom'].indexOf(this.placement)!=-1 ){
-                    left = view_dim.width/2-popper_dim.width/2;
+                    left = view_dim.width/2-tipster_dim.width/2;
                 }else if(['top-right','center-right','bottom-right'].indexOf(this.placement)!=-1){
-                    left = view_dim.width - popper_dim.width-10;
+                    left = view_dim.width - tipster_dim.width-10;
                 }
                 top = 10;
                 if(this.placement=='center'){
-                    top = view_dim.height/2-popper_dim.height/2;
+                    top = view_dim.height/2-tipster_dim.height/2;
                 }else if(['bottom-left','bottom','bottom-right'].indexOf(this.placement)!=-1){
-                    top = view_dim.height-popper_dim.height-10;
+                    top = view_dim.height-tipster_dim.height-10;
                 }
             }
 
@@ -321,9 +329,9 @@ export default{
 
             this.popupO.style.visibility = 'visible';
             //this.popupO.style.transition='0.5s';
-            this.popup_width = popper_dim.width/2;
-            this.popup_height = popper_dim.height/2;
-            //console.log(popper_dim);
+            this.popup_width = tipster_dim.width/2;
+            this.popup_height = tipster_dim.height/2;
+            //console.log(tipster_dim);
             this.popupO.style.opacity = 1;
             this.popupO.style.zIndex = 100;
             this.is_showing = true;
@@ -351,7 +359,7 @@ export default{
         target_dim(){
             return this.dsDom.getBoundingClientRect();
         },
-        popper_dim(){
+        tipster_dim(){
             return this.popupO.getBoundingClientRect();
         },
         resized(){
