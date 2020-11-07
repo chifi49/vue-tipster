@@ -377,18 +377,20 @@ if (typeof window !== 'undefined') {
 // Indicate to webpack that this file can be concatenated
 /* harmony default export */ var setPublicPath = (null);
 
-// CONCATENATED MODULE: /Users/fisigma/.nvm/versions/node/v12.16.1/lib/node_modules/@vue/cli-service-global/node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"941e22d0-vue-loader-template"}!/Users/fisigma/.nvm/versions/node/v12.16.1/lib/node_modules/@vue/cli-service-global/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/fisigma/.nvm/versions/node/v12.16.1/lib/node_modules/@vue/cli-service-global/node_modules/cache-loader/dist/cjs.js??ref--0-0!/Users/fisigma/.nvm/versions/node/v12.16.1/lib/node_modules/@vue/cli-service-global/node_modules/vue-loader/lib??vue-loader-options!./vue-popper.vue?vue&type=template&id=5225fc2c&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',[_vm._t("default"),_c('div',{ref:"popupcontent",style:({'display':'none',width:'auto','position':'absolute','max-width':_vm.max_width,'min-width':_vm.min_width,'left':_vm.popup_left+'px','top':_vm.popup_top+'px','visibility':'hidden','opacity':_vm.popup_opacity,'transition':'0.5s'})},[_c('span',{staticClass:"popper-caret-bg",style:({width:0,height:0,borderLeft:'9px solid transparent',borderRight:'9px solid transparent',borderBottom:'9px solid '+_vm.border_color,'left':(_vm.popup_width)-9+'px','position':'absolute','top':'-8px'})}),_c('span',{staticClass:"popper-caret",style:({width:0,height:0,borderLeft:'7px solid transparent',borderRight:'7px solid transparent',borderBottom:'7px solid '+_vm.caret_bg_color,'left':(_vm.popup_width)-7+'px','position':'absolute','top':'-6px'})}),_c('div',{staticClass:"popper-container",style:({'border-color':_vm.border_color,'border-style':'solid',borderWidth:'1px','border-radius':'10px'})},[_c('div',{staticClass:"popper-header",style:({'display':_vm.has_header?'block':'none','background-color':_vm.header_bg_color,'border-radius':'10px 10px 0px 0px', padding:'5px'})},[_vm._t("title",[_vm._v(_vm._s(_vm.title))])],2),_c('div',{staticClass:"popper-content",style:({'background-color':_vm.content_bg_color,'padding':'5px','border-radius':'10px'})},[_vm._t("content",[_c('div',{domProps:{"innerHTML":_vm._s(_vm.content)}})])],2)])])],2)}
+// CONCATENATED MODULE: /Users/fisigma/.nvm/versions/node/v12.16.1/lib/node_modules/@vue/cli-service-global/node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"941e22d0-vue-loader-template"}!/Users/fisigma/.nvm/versions/node/v12.16.1/lib/node_modules/@vue/cli-service-global/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/fisigma/.nvm/versions/node/v12.16.1/lib/node_modules/@vue/cli-service-global/node_modules/cache-loader/dist/cjs.js??ref--0-0!/Users/fisigma/.nvm/versions/node/v12.16.1/lib/node_modules/@vue/cli-service-global/node_modules/vue-loader/lib??vue-loader-options!./vue-popper.vue?vue&type=template&id=e1d16c72&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',[_vm._t("default"),_c('div',{ref:"popupcontent",style:({'display':'none',width:'auto','position':'absolute','max-width':_vm.max_width,'min-width':_vm.min_width,'left':_vm.popup_left+'px','top':_vm.popup_top+'px','visibility':'hidden','opacity':_vm.popup_opacity,'transition':'0.5s'})},[_c('span',{staticClass:"popper-caret-bg",style:({width:0,height:0,borderLeft:'9px solid transparent',borderRight:'9px solid transparent',borderBottom:'9px solid '+_vm.border_color,'left':(_vm.popup_width)-9+'px','position':'absolute','top':'-8px'})}),_c('span',{staticClass:"popper-caret",style:({width:0,height:0,borderLeft:'7px solid transparent',borderRight:'7px solid transparent',borderBottom:'7px solid '+_vm.caret_bg_color,'left':(_vm.popup_width)-7+'px','position':'absolute','top':'-6px'})}),_c('div',{staticClass:"popper-container",style:({'border-color':_vm.border_color,'border-style':'solid',borderWidth:'1px','border-radius':'10px'})},[_c('div',{staticClass:"popper-header",style:({'display':_vm.has_header?'block':'none','background-color':_vm.header_bg_color,'border-radius':'10px 10px 0px 0px', padding:'5px'})},[_vm._t("title",[_vm._v(_vm._s(_vm.title))])],2),_c('div',{staticClass:"popper-content",style:({'background-color':_vm.content_bg_color,'padding':'5px','border-radius':'10px'})},[_vm._t("content",[_c('div',{domProps:{"innerHTML":_vm._s(_vm.content)}})])],2),_c('div',{staticClass:"popper-footer",style:({display:_vm.has_footer?'block':'none'})})])])],2)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./vue-popper.vue?vue&type=template&id=5225fc2c&
+// CONCATENATED MODULE: ./vue-popper.vue?vue&type=template&id=e1d16c72&
 
 // EXTERNAL MODULE: /Users/fisigma/.nvm/versions/node/v12.16.1/lib/node_modules/@vue/cli-service-global/node_modules/core-js/modules/web.timers.js
 var web_timers = __webpack_require__("a11f");
 
 // CONCATENATED MODULE: /Users/fisigma/.nvm/versions/node/v12.16.1/lib/node_modules/@vue/cli-service-global/node_modules/thread-loader/dist/cjs.js!/Users/fisigma/.nvm/versions/node/v12.16.1/lib/node_modules/@vue/cli-service-global/node_modules/babel-loader/lib??ref--12-1!/Users/fisigma/.nvm/versions/node/v12.16.1/lib/node_modules/@vue/cli-service-global/node_modules/cache-loader/dist/cjs.js??ref--0-0!/Users/fisigma/.nvm/versions/node/v12.16.1/lib/node_modules/@vue/cli-service-global/node_modules/vue-loader/lib??vue-loader-options!./vue-popper.vue?vue&type=script&lang=js&
 
+//
+//
 //
 //
 //
@@ -436,6 +438,11 @@ var web_timers = __webpack_require__("a11f");
       type: String,
       "default": '#ccc'
     },
+    footer_bg_color: {
+      required: false,
+      type: String,
+      "default": '#ccc'
+    },
     content_bg_color: {
       required: false,
       type: String,
@@ -445,11 +452,29 @@ var web_timers = __webpack_require__("a11f");
       required: false,
       type: String,
       "default": '#afafaf'
+    },
+    placement: {
+      required: false,
+      type: String,
+      "default": 'auto'
+    },
+    target: {
+      required: false,
+      type: String,
+      "default": null
+    },
+    keep_on_over: {
+      required: false,
+      type: Boolean,
+      "default": false
     }
   },
   computed: {
     has_header: function has_header() {
       return this.title != '' || typeof this.$slots.title !== 'undefined' && this.$slots.title.length > 0 ? true : false;
+    },
+    has_footer: function has_footer() {
+      return typeof this.$slots.footer !== 'undefined' ? true : false;
     },
     caret_bg_color: function caret_bg_color() {
       var bg_color = this.content_bg_color;
@@ -470,28 +495,83 @@ var web_timers = __webpack_require__("a11f");
       popup_left: '0px',
       popup_top: '0px',
       popup_opacity: 0,
-      popup_width: 0
+      popup_width: 0,
+      hide_timeout: -1,
+      hide_styles_timeout: -1,
+      is_showing: false,
+      current_placement: '' //top, top-left, top-right, bottom, bottom-left, bottom-right (default is bottom)
+
     };
   },
   methods: {
     setupHandlers: function setupHandlers() {
+      var _this = this;
+
       if (this.dsDom != null) {
         var me = this;
+
+        if (this.keep_on_over) {
+          this.popupO.addEventListener('mouseover', function () {
+            console.log('on over');
+            clearTimeout(me.hide_styles_timeout);
+            clearTimeout(me.hide_timeout);
+            _this.is_showing = true;
+            me.show();
+          });
+          this.popupO.addEventListener('mouseout', function () {
+            _this.is_showing = false;
+            me.hide();
+          });
+        }
+
         this.dsDom.addEventListener('focus', function () {
+          clearTimeout(me.hide_styles_timeout);
+          clearTimeout(me.hide_timeout);
+          _this.is_showing = true;
           me.show();
         });
         this.dsDom.addEventListener('mouseover', function () {
+          console.log('mouse over');
+          clearTimeout(me.hide_styles_timeout);
+          clearTimeout(me.hide_timeout);
+          _this.is_showing = true;
           me.show();
         });
-        this.dsDom.addEventListener('blue', function () {
-          me.hide();
+        this.dsDom.addEventListener('blur', function () {
+          _this.is_showing = false;
+          me.hide_timeout = setTimeout(function () {
+            me.hide();
+          }, 100);
         });
         this.dsDom.addEventListener('mouseout', function () {
-          me.hide();
+          _this.is_showing = false;
+          console.log('mouse out');
+          me.hide_timeout = setTimeout(function () {
+            me.hide();
+          }, 100);
         });
       }
     },
     removeHandlers: function removeHandlers() {},
+    measureViewport: function measureViewport() {
+      var div = document.createElement('div');
+      div.style.zIndex = -1;
+      div.style.position = 'fixed';
+      div.style.visibility = 'hidden';
+      div.style.opacity = 0;
+      div.style.top = '0px';
+      div.style.left = '0px';
+      div.style.right = '0px';
+      div.style.bottom = '0px';
+      document.body.appendChild(div);
+      var dim = div.getBoundingClientRect();
+      var view = {
+        w: dim.width,
+        h: dim.height
+      };
+      document.body.removeChild(div);
+      return view;
+    },
     show: function show() {
       var target_dim = this.target_dim(); //console.log(this.popupO);
       //console.log(this.popupO.style);
@@ -501,8 +581,22 @@ var web_timers = __webpack_require__("a11f");
       this.popupO.style.display = 'inline-block'; //measure after we set display to inline-block because in hidden it can report wrongly
 
       var popper_dim = this.popper_dim();
-      this.popup_left = target_dim.left;
-      this.popup_top = target_dim.top + target_dim.height + 10;
+      var view_dim = this.measureViewport(); //console.log(view_dim);
+
+      var left = target_dim.left + target_dim.width / 2 - popper_dim.width / 2;
+
+      if (left < 0) {
+        left = target_dim.left;
+      }
+
+      this.popup_left = left;
+      var top = target_dim.top + target_dim.height + 10;
+
+      if (top > view_dim.h) {
+        top = target_dim.top - popper_dim.height - 10;
+      }
+
+      this.popup_top = top;
       this.popupO.style.visibility = 'visible'; //this.popupO.style.transition='0.5s';
 
       this.popup_width = popper_dim.width / 2; //console.log(popper_dim);
@@ -510,12 +604,12 @@ var web_timers = __webpack_require__("a11f");
       this.popup_opacity = 1;
     },
     hide: function hide() {
-      var _this = this;
+      var _this2 = this;
 
       this.popup_opacity = 0;
-      setTimeout(function () {
-        _this.popupO.style.visibility = 'hidden';
-        _this.popup_display = 'none';
+      this.hide_styles_timeout = setTimeout(function () {
+        _this2.popupO.style.visibility = 'hidden';
+        _this2.popup_display = 'none';
       }, 500);
     },
     target_dim: function target_dim() {
@@ -527,9 +621,16 @@ var web_timers = __webpack_require__("a11f");
   },
   mounted: function mounted() {
     //console.log(this.$slots.default[0].elm);
-    this.dsDom = this.$slots["default"][0].elm;
     this.popupO = this.$refs['popupcontent'];
-    document.body.appendChild(this.popupO); //console.log(this.popupO);
+    document.body.appendChild(this.popupO);
+
+    if (typeof this.$slots["default"] !== 'undefined' && this.$slots["default"].length > 0) {
+      this.dsDom = this.$slots["default"][0].elm;
+    } else if (this.target != null) {
+      this.dsDom = document.querySelector(this.target);
+      this.$el.style.display = 'none';
+    } //console.log(this.popupO);
+
 
     this.setupHandlers();
   },
