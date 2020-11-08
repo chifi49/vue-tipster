@@ -66,7 +66,7 @@
                     <vuetipster ref="notifier_hover" placement="bottom" :keep_on_over="popup_keep_on_over" type="notification" title="i will notify" content="i will be your permanent notifier and wont <br />close if you hover me"></vuetipster>
                     <vuetipster ref="notifier_click" :close_on_click="popup_keep_on_over" placement="bottom-right"  type="notification" title="i will notify" content="close me with a click :("></vuetipster>
 
-                    <vuetipster ref="notifier_permanent" :backdrop="true" :backdrop_closable="true" :backdrop_bg_color="'rgba(0,255,0,0.5)'" placement="center"  :manual="true" type="notification">
+                    <vuetipster :min_width="'400px'" ref="notifier_permanent" :backdrop="true" :backdrop_closable="true" :backdrop_bg_color="'rgba(0,0,0,0.5)'" :closable="true" placement="center"  :manual="true" type="notification">
                         <template v-slot:title>
                             Please confirm
                         </template>

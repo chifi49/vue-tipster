@@ -2,7 +2,7 @@
     <span data-init='0' >
         <slot name="default"></slot>
         <div ref="backdrop" :style="{'position':'fixed','top':'0px','right':'0px','left':'0px','bottom':'0px','background-color':backdrop_bg_color,'display':backdrop_visible?'block':'none','transition':'opacity 0.3s'}"></div>
-        <div ref="popupcontent" :style="{'display':'none',width:'auto','position':(type=='dialog' || type=='notification'?'fixed':'absolute'),'max-width':max_width,'min-width':min_width,'left':popup_left+'px','top':popup_top+'px','visibility':'hidden','transition':'opacity 0.4s'}">
+        <div ref="popupcontent" :style="{'display':'none',width:'auto','position':(type=='dialog' || type=='notification'?'fixed':'absolute'),'max-width':max_width,'width':width,'min-width':min_width,'left':popup_left+'px','top':popup_top+'px','visibility':'hidden','transition':'opacity 0.4s'}">
 
             <!-- top center caret-->
             <span v-if="type=='tooltip'?true:false" class="tipster-caret-bg tipster-caret-bg-top" :style="{'display':current_placement=='bottom'?'inline-block':'none',width:0,height:0,borderLeft:'9px solid transparent',borderRight:'9px solid transparent',borderBottom:'9px solid '+border_color,'left':(popup_width)-9+'px','position':'absolute','top':'-8px'}">
@@ -15,8 +15,14 @@
             </span>
             
             <div class="tipster-container" :style="{'border-color':border_color,'border-style':'solid',borderWidth:'1px','border-radius':'10px'}">
-                <div class="tipster-header" :style="{'display':has_header?'block':'none','background-color':header_bg_color,'border-radius':'10px 10px 0px 0px', padding:'5px'}">
+                <div class="tipster-header" :style="{'display':has_header?'block':'none','background-color':header_bg_color,'border-radius':'10px 10px 0px 0px', padding:'5px','position':'relative'}">
                     <slot name="title"><div v-html="title"></div></slot>
+                    <a v-if="closable"  @click="hide" :style="{'cursor':'pointer','position':'absolute','top':'5px','right':'5px','display':'inline-block','height':'14px','width':'14px'}" >
+                        <slot name="close-icon">
+                            <span :style="{'display':'inline-block','height':'14px','width':'2px','transform':'rotate(45deg)',backgroundColor:'#fff'}"></span>
+                            <span :style="{'display':'inline-block','height':'14px','width':'2px','transform':'rotate(-45deg)',backgroundColor:'#fff','position':'relative','left':'-2px'}"></span>
+                        </slot>
+                    </a>
                 </div>
                 <div class="tipster-content" :style="{'background-color':content_bg_color,'padding':'5px','border-radius':has_header && has_footer?'0px':(has_header?'0px 0px 10px 10px':(has_footer?'10px 10px 0px 0px':'10px'))}">
                     <slot name="content">
@@ -62,6 +68,11 @@ export default{
             type:Boolean,
             default:false
         },
+        closable:{
+            required:false,
+            type:Boolean,
+            default:false
+        },
         type:{
             required:false,
             type:String,
@@ -95,7 +106,7 @@ export default{
         width:{
             required:false,
             type:String,
-            default:'250px'
+            default:'auto'
         },
         max_width:{
             required:false,
