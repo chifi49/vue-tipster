@@ -13,15 +13,34 @@
                     <vuetipster title="simple" placement="right" :content="popup_content">
                         <button >i have a tooltip</button>
                     </vuetipster>
+                    <br />
+                    <vuetipster placement="bottom-right">
+                        <button>with all slots</button>
+                        <template v-slot:title>
+                            <h1>Heading h1</h1>
+                        </template>
+                        <template v-slot:content>
+                            <ul>
+                                <li>with</li>
+                                <li>html</li>
+                                <li>content</li>
+                            </ul>
+                        </template>
+                        <template v-slot:footer>
+                            <footer>original footer</footer>
+                        </template>
+                    </vuetipster>
                 </td>
                 <td>
-                    <vuetipster ref="manual_popper" :title="popup_title" :content="popup_content_html" :manual="popup_manual">
+                    <vuetipster :header_bg_color='header_bg_color' ref="manual_popper" :title="popup_title" :content="popup_content_html" :manual="popup_manual">
                         <button >manual - someone else controls me</button>
                     </vuetipster>
                     &nbsp;
                     <button @click="$refs['manual_popper'].show()">show</button>
                     &nbsp;
                     <button @click="$refs['manual_popper'].hide()">hide</button>
+                    &nbsp;
+                    <button @click='header_bg_color="pink"'>set pink header</button>
                 </td>
             </tr>
             <tr valign="middle">
@@ -37,10 +56,27 @@
                     <button @click="$refs['notifier_hover'].show();">show notification with keep on hover</button>
                     &nbsp;
                     <button @click="$refs['notifier_click'].show()">show notification and close on click</button>
+                    <br />
+                    <button @click="$refs['notifier_permanent'].show()">permament notification</button>
 
-                    <vuetipster ref="notifier" type="notification" title="i will notify" content="i will be your permanent notifier" placement="top-right"></vuetipster>
+                    <vuetipster ref="notifier" type="notification" title="i will notify" content="i will be your permanent notifier" placement="top-right">
+
+                        
+                    </vuetipster>
                     <vuetipster ref="notifier_hover" placement="bottom" :keep_on_over="popup_keep_on_over" type="notification" title="i will notify" content="i will be your permanent notifier and wont <br />close if you hover me"></vuetipster>
                     <vuetipster ref="notifier_click" :close_on_click="popup_keep_on_over" placement="bottom-right"  type="notification" title="i will notify" content="close me with a click :("></vuetipster>
+
+                    <vuetipster ref="notifier_permanent" :backdrop="true" :backdrop_closable="true" :backdrop_bg_color="'rgba(0,255,0,0.5)'" placement="center"  :manual="true" type="notification">
+                        <template v-slot:title>
+                            Please confirm
+                        </template>
+                        <template v-slot:content>
+                            <p>do you like apples?</p>
+                        </template>
+                        <template v-slot:footer>
+                            <div style="text-align:right"><button @click="$refs['notifier_permanent'].hide()">yes</button><button>no</button></div>
+                        </template>
+                    </vuetipster>
                 </td>
                 <td>
                     </td>
@@ -55,7 +91,7 @@
                 <td>
                     <button id="target_button">with target</button>
 
-                    <vuetipster ref="popup-program" :title="popup_title" :content="popup_content_html" target="#target_button"></vuetipster>
+                    <vuetipster placement='bottom-left' ref="popup-program" :title="popup_title" :content="popup_content_html" target="#target_button"></vuetipster>
                     &nbsp;
                     <button @click="showPopup">show</button>
                     &nbsp;
@@ -90,6 +126,7 @@ export default{
     },
     data(){
         return {
+            header_bg_color:'blue',
             tipster_visible:false,
             popup_keep_on_over:true,
             popup_manual:true,

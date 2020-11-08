@@ -1,7 +1,8 @@
 <template>
     <span data-init='0' >
         <slot name="default"></slot>
-        <div ref="popupcontent" :style="{'display':'none',width:'auto','position':(type=='dialog' || type=='notification'?'fixed':'absolute'),'max-width':max_width,'min-width':min_width,'left':popup_left+'px','top':popup_top+'px','visibility':'hidden','transition':'opacity 0.5s'}">
+        <div ref="backdrop" :style="{'position':'fixed','top':'0px','right':'0px','left':'0px','bottom':'0px','background-color':backdrop_bg_color,'display':backdrop_visible?'block':'none','transition':'opacity 0.3s'}"></div>
+        <div ref="popupcontent" :style="{'display':'none',width:'auto','position':(type=='dialog' || type=='notification'?'fixed':'absolute'),'max-width':max_width,'min-width':min_width,'left':popup_left+'px','top':popup_top+'px','visibility':'hidden','transition':'opacity 0.4s'}">
 
             <!-- top center caret-->
             <span v-if="type=='tooltip'?true:false" class="tipster-caret-bg tipster-caret-bg-top" :style="{'display':current_placement=='bottom'?'inline-block':'none',width:0,height:0,borderLeft:'9px solid transparent',borderRight:'9px solid transparent',borderBottom:'9px solid '+border_color,'left':(popup_width)-9+'px','position':'absolute','top':'-8px'}">
@@ -17,12 +18,12 @@
                 <div class="tipster-header" :style="{'display':has_header?'block':'none','background-color':header_bg_color,'border-radius':'10px 10px 0px 0px', padding:'5px'}">
                     <slot name="title"><div v-html="title"></div></slot>
                 </div>
-                <div class="tipster-content" :style="{'background-color':content_bg_color,'padding':'5px','border-radius':'10px'}">
+                <div class="tipster-content" :style="{'background-color':content_bg_color,'padding':'5px','border-radius':has_header && has_footer?'0px':(has_header?'0px 0px 10px 10px':(has_footer?'10px 10px 0px 0px':'10px'))}">
                     <slot name="content">
                         <div v-html="content"></div>
                     </slot>
                 </div>
-                <div class="tipster-footer" :style="{display:has_footer?'block':'none'}">
+                <div class="tipster-footer" :style="{display:has_footer?'block':'none','border-radius':'0px 0px 10px 10px','background-color':footer_bg_color,padding:'5px'}">
                     <slot name="footer">
                         <div v-html="footer"></div>
                     </slot>
@@ -46,6 +47,21 @@ import Vue from 'vue';
 export default{
     name:'vue-tipster',
     props:{
+        backdrop:{
+            required:false,
+            type:Boolean,
+            default:false
+        },
+        backdrop_bg_color:{
+            required:false,
+            type:String,
+            default:'rgba(0,0,0,0.3)'
+        },
+        backdrop_closable:{
+            required:false,
+            type:Boolean,
+            default:false
+        },
         type:{
             required:false,
             type:String,
@@ -76,10 +92,15 @@ export default{
             type:String,
             default:'auto'
         },
-        max_width:{
+        width:{
             required:false,
             type:String,
             default:'250px'
+        },
+        max_width:{
+            required:false,
+            type:String,
+            default:'100%'
         },
         header_bg_color:{
             required:false,
@@ -195,7 +216,9 @@ export default{
             hide_timeout:-1,
             hide_styles_timeout:-1,
             is_showing: false,
-            current_placement:'bottom' //top, top-left, top-right, bottom, bottom-left, bottom-right (default is bottom)
+            current_placement:'bottom', //top, top-left, top-right, bottom, bottom-left, bottom-right (default is bottom)
+            backdrop_visible:false,
+            backdropO:null
         }
     },
     methods:{
@@ -211,20 +234,26 @@ export default{
         },
         setupHandlers_notification(){
             var me = this;
+            if(this.backdrop_closable){
+                //alert(true)
+                this.backdropO.addEventListener('click',this.hide);
+            }
             if(this.close_on_click){
                 this.popupO.addEventListener('click',this.hide);
             }
-            if(this.keep_on_over){
-                this.popupO.addEventListener('mouseover',()=>{
-                    //console.log('on over');
+            if(!this.manual){
+                if(this.keep_on_over){
+                    this.popupO.addEventListener('mouseover',()=>{
+                        //console.log('on over');
 
-                    me.show();
-                    clearTimeout(this.hide_timeout);
-                    clearTimeout(this.hide_styles_timeout);
-                })
-                this.popupO.addEventListener('mouseout',()=>{
-                    this.hide_timeout = setTimeout(()=>{me.hide()},this.timeout);
-                })
+                        me.show();
+                        clearTimeout(this.hide_timeout);
+                        clearTimeout(this.hide_styles_timeout);
+                    })
+                    this.popupO.addEventListener('mouseout',()=>{
+                        this.hide_timeout = setTimeout(()=>{me.hide()},this.timeout);
+                    })
+                }
             }
         },
         setupHandlers_tooltip(){
@@ -267,6 +296,9 @@ export default{
             if(this.keep_on_over && this.popupO!=null){
                 this.popupO.removeEventListener('mouseover',this.show);
                 this.popupO.removeEventListener('mouseout',this.hide);
+            }
+            if(this.backdrop_closable){
+                this.backdropO.removeEventListener('click',this.hide);
             }
         },
         measureViewport(){
@@ -314,7 +346,14 @@ export default{
             if(this.type=='tooltip'){
                 this.current_placement='bottom';
 
-                 left = target_dim.left+(target_dim.width/2)-(tipster_dim.width/2);
+                left = target_dim.left+(target_dim.width/2)-(tipster_dim.width/2);
+
+                if(this.placement=='top-left' || this.placement=='bottom-left'){
+                    left = target_dim.left;
+                }else if(this.placement=='top-right' || this.placement=='bottom-right'){
+                    left = target_dim.left+target_dim.width-tipster_dim.width;
+                }
+
                 if(left<0){
                     left = target_dim.left;
                 }else if(left+tipster_dim.width>view_dim.width){
@@ -323,8 +362,8 @@ export default{
                 
                 //always default to bottom
                 top = target_dim.top+target_dim.height+10;
-                if(this.placement=='top'){
-                    top = target_dim.top-tipster_dim.height-10;
+                if(this.placement=='top' || this.placement=='top-left' || this.placement=='top-right'){
+                    top = target_dim.top-tipster_dim.height-10;    
                 }else if(this.placement=='left' ){
                     top = target_dim.top+(target_dim.height/2)-tipster_dim.height/2;
                     left = target_dim.left-tipster_dim.width-10;
@@ -366,23 +405,36 @@ export default{
             this.popup_width = tipster_dim.width/2;
             this.popup_height = tipster_dim.height/2;
             //console.log(tipster_dim);
+
+            if(this.backdrop){
+                this.backdrop_visible = true;
+                this.backdropO.style.zIndex = 99;
+                this.backdropO.style.opacity = 1;
+            }
+
             this.popupO.style.opacity = 1;
             this.popupO.style.zIndex = 100;
             this.is_showing = true;
 
             if(this.type=='notification'){
-                if(!this.close_on_click){
+                if(!this.close_on_click && !this.manual){
                     this.hide_timeout = setTimeout(this.hide,this.timeout);
                 }
             }
 
         },
         hide(){
+            clearTimeout(this.hide_timeout);
+            clearTimeout(this.hide_styles_timeout);
             this.hide_timeout = setTimeout(()=>{
                 //this.popup_opacity = 0;
+                this.backdropO.style.opacity = 0;
                 this.popupO.style.opacity = 0;
                 this.is_showing = false;
                 this.hide_styles_timeout = setTimeout(()=>{
+                    this.backdropO.style.zIndex = -1;
+                    this.backdrop_visible = false;
+
                     this.popupO.style.zIndex = -1;
                     this.popupO.style.visibility = 'hidden';
                     //this.popup_display='none';
@@ -416,7 +468,20 @@ export default{
     },
     created(){
         if(typeof this.$vtipster=='undefined'){
-            Vue.prototype.$vtipster  = Vue.observable({instances:0,creations:0})
+
+            Vue.prototype.$vtipster  = Vue.observable({
+                instances:0,
+                creations:0,
+                listeners:[]
+            })
+            Vue.prototype.$vtipster.actions = {
+                increaseInstance:function(){
+
+                }
+            }
+            Vue.prototype.$vtipster.subscribe = function(name,callback){
+                this.listeners[name].push(callback);
+            }
         }
         this.$vtipster.instances++;
         this.$vtipster.creations++;
@@ -427,6 +492,7 @@ export default{
         var popup_e = document.querySelector("[data-id='"+this.id+"']");
         if(popup_e!=null){
             document.body.removeChild(popup_e);
+            console.log('remove from mounted');
         }
         var inited = this.$el.getAttribute('data-init');
         if(parseInt(inited)==1){
@@ -437,9 +503,14 @@ export default{
         //console.log(this.$slots.default[0].elm);
         this.original_type = this.type;
 
+        this.backdropO = this.$refs['backdrop'];
+        this.backdropO.setAttribute('data-id','background-'+this.id);
+        document.body.appendChild(this.backdropO);
+
         this.popupO = this.$refs['popupcontent'];
         this.popupO.setAttribute('data-id',this.id)
         //append to body and it will automatically move to end of the <body> tag
+
         document.body.appendChild( this.popupO );
 
 
@@ -460,7 +531,8 @@ export default{
     },
     beforeDestroy(){
         //alert('before')
-        
+        this.$vtipster.instances--;
+        console.log(this.$vtipster.instances);
         document.body.removeChild(this.popupO);
     },
     destroy(){
