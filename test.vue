@@ -3,7 +3,7 @@
         <table width="100%" height="100%" style="min-height:100%" cellpadding="5" border="0" >
             <tr valign="top">
                 <td>
-                    <vuetipster title="persist on me!" content="mouse hover me and i won't hide" :keep_on_over="popup_keep_on_over">
+                    <vuetipster @shown="shown" @hidden="hidden" title="persist on me!" content="mouse hover me and i won't hide" :keep_on_over="popup_keep_on_over">
                         <button >hover with persistence</button>
                     </vuetipster>
                 </td>
@@ -142,6 +142,12 @@ export default{
         },
         hidePopup(){
             this.$refs['popup-program'].hide();
+        },
+        shown(){
+            console.log('shown callback')
+        },
+        hidden(){
+            console.log('hidden callback');
         }
     },
     mounted(){

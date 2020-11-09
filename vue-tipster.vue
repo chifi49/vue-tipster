@@ -5,7 +5,7 @@
         <div ref="popupcontent" :style="{'display':'none',width:'auto','position':(type=='dialog' || type=='notification'?'fixed':'absolute'),'max-width':max_width,'width':width,'min-width':min_width,'left':popup_left+'px','top':popup_top+'px','visibility':'hidden','transition':'opacity 0.4s'}">
 
             <!-- top center caret-->
-            <span v-if="type=='tooltip'?true:false" class="tipster-caret-bg tipster-caret-bg-top" :style="{'display':current_placement=='bottom'?'inline-block':'none',width:0,height:0,borderLeft:'9px solid transparent',borderRight:'9px solid transparent',borderBottom:'9px solid '+border_color,'left':(popup_width)-9+'px','position':'absolute','top':'-8px'}">
+            <span v-if="type=='tooltip'?true:false" class="tipster-caret-bg tipster-caret-bg-top" :style="{'display':current_placement=='bottom'?'inline-block':'none',width:0,height:0,borderLeft:'9px solid transparent',borderRight:'9px solid transparent',borderBottom:'9px solid '+border_color,'left':(placement=='bottom-left'?'10px':(placement=='bottom-right'?popup_width*2-25+'px':(popup_width)-9+'px')),'position':'absolute','top':'-8px'}">
                 <span class="tipster-caret" :style="{width:0,height:0,borderLeft:'7px solid transparent',borderRight:'7px solid transparent',borderBottom:'7px solid '+caret_bg_color,'left':'-7px','position':'absolute','top':'2px'}"></span>
             </span>
 
@@ -17,7 +17,7 @@
             <div class="tipster-container" :style="{'border-color':border_color,'border-style':'solid',borderWidth:'1px','border-radius':'10px'}">
                 <div class="tipster-header" :style="{'display':has_header?'block':'none','background-color':header_bg_color,'border-radius':'10px 10px 0px 0px', padding:'5px','position':'relative'}">
                     <slot name="title"><div v-html="title"></div></slot>
-                    <a v-if="closable"  @click="hide" :style="{'cursor':'pointer','position':'absolute','top':'5px','right':'5px','display':'inline-block','height':'14px','width':'14px'}" >
+                    <a v-if="closable"  @click="close" :style="{'cursor':'pointer','position':'absolute','top':'5px','right':'5px','display':'inline-block','height':'14px','width':'14px'}" >
                         <slot name="close-icon">
                             <span :style="{'display':'inline-block','height':'14px','width':'2px','transform':'rotate(45deg)',backgroundColor:'#fff'}"></span>
                             <span :style="{'display':'inline-block','height':'14px','width':'2px','transform':'rotate(-45deg)',backgroundColor:'#fff','position':'relative','left':'-2px'}"></span>
@@ -53,6 +53,7 @@ import Vue from 'vue';
 export default{
     name:'vue-tipster',
     props:{
+        
         backdrop:{
             required:false,
             type:Boolean,
@@ -427,6 +428,8 @@ export default{
             this.popupO.style.zIndex = 100;
             this.is_showing = true;
 
+            //this.shown({instance:this});
+            this.$emit('shown',{instance:this});
             if(this.type=='notification'){
                 if(!this.close_on_click && !this.manual){
                     this.hide_timeout = setTimeout(this.hide,this.timeout);
@@ -434,10 +437,17 @@ export default{
             }
 
         },
+        close(){
+            //this.closed();
+            this.$emit('closed',{instance:this});
+            this.hide();
+        },
         hide(){
             clearTimeout(this.hide_timeout);
             clearTimeout(this.hide_styles_timeout);
             this.hide_timeout = setTimeout(()=>{
+                //this.hidden({instance:this})
+                this.$emit('hidden',{instance:this});
                 //this.popup_opacity = 0;
                 this.backdropO.style.opacity = 0;
                 this.popupO.style.opacity = 0;
@@ -503,11 +513,11 @@ export default{
         var popup_e = document.querySelector("[data-id='"+this.id+"']");
         if(popup_e!=null){
             document.body.removeChild(popup_e);
-            console.log('remove from mounted');
+            //console.log('remove from mounted');
         }
         var inited = this.$el.getAttribute('data-init');
         if(parseInt(inited)==1){
-            console.log('inited');
+            //console.log('inited');
             this.$el.setAttribute('data-init',1);
         }
         //console.log(this.id);
@@ -543,7 +553,7 @@ export default{
     beforeDestroy(){
         //alert('before')
         this.$vtipster.instances--;
-        console.log(this.$vtipster.instances);
+        //console.log(this.$vtipster.instances);
         document.body.removeChild(this.popupO);
     },
     destroy(){
@@ -553,7 +563,7 @@ export default{
         this.removeHandlers();
         //document.body.removeChild( this.popupO );
         //document.body.removeChild( this.popupO );
-        console.log('removed popupO');
+        //console.log('removed popupO');
     }
 }
 </script>
