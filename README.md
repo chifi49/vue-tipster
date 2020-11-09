@@ -46,3 +46,6 @@ new Vue({
     }
 })
 </script>
+```
+## Full Docs
+[here](https://vue-tipster-demo.vercel.app/docs)
